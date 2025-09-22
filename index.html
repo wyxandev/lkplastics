@@ -1,0 +1,1274 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LK Plastics - Order Integration Platform Proposal</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px 0;
+        }
+        
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            overflow: hidden;
+        }
+        
+        /* Header */
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 60px;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .header::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -10%;
+            width: 50%;
+            height: 200%;
+            background: rgba(255,255,255,0.05);
+            transform: rotate(35deg);
+        }
+        
+        .header-content {
+            position: relative;
+            z-index: 1;
+        }
+        
+        .company-badge {
+            display: inline-block;
+            background: rgba(255,255,255,0.2);
+            padding: 8px 20px;
+            border-radius: 25px;
+            font-size: 12px;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            margin-bottom: 20px;
+        }
+        
+        h1 {
+            font-size: 48px;
+            font-weight: 700;
+            margin-bottom: 20px;
+            animation: fadeInUp 0.8s ease;
+        }
+        
+        .subtitle {
+            font-size: 20px;
+            opacity: 0.95;
+            margin-bottom: 30px;
+            animation: fadeInUp 0.8s ease 0.2s both;
+        }
+        
+        .header-meta {
+            display: flex;
+            gap: 30px;
+            font-size: 14px;
+            opacity: 0.9;
+            animation: fadeInUp 0.8s ease 0.4s both;
+        }
+        
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        /* Tab Navigation */
+        .tab-nav {
+            display: flex;
+            background: #f8f9fa;
+            padding: 0;
+            border-bottom: 2px solid #e9ecef;
+            overflow-x: auto;
+        }
+        
+        .tab-button {
+            background: none;
+            border: none;
+            padding: 20px 30px;
+            font-size: 14px;
+            font-weight: 500;
+            color: #6c757d;
+            cursor: pointer;
+            position: relative;
+            transition: all 0.3s;
+            white-space: nowrap;
+        }
+        
+        .tab-button:hover {
+            background: rgba(102, 126, 234, 0.05);
+            color: #667eea;
+        }
+        
+        .tab-button.active {
+            color: #667eea;
+            background: white;
+        }
+        
+        .tab-button.active::after {
+            content: '';
+            position: absolute;
+            bottom: -2px;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: linear-gradient(90deg, #667eea, #764ba2);
+        }
+        
+        /* Tab Content */
+        .tab-content {
+            padding: 40px 60px;
+            min-height: 600px;
+        }
+        
+        .tab-pane {
+            display: none;
+            animation: fadeIn 0.5s;
+        }
+        
+        .tab-pane.active {
+            display: block;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+        
+        /* Content Styles */
+        h2 {
+            color: #2d3436;
+            font-size: 32px;
+            margin-bottom: 30px;
+            position: relative;
+            padding-bottom: 15px;
+        }
+        
+        h2::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 60px;
+            height: 3px;
+            background: linear-gradient(90deg, #667eea, #764ba2);
+        }
+        
+        h3 {
+            color: #2d3436;
+            font-size: 20px;
+            margin: 30px 0 15px;
+        }
+        
+        p {
+            line-height: 1.8;
+            color: #636e72;
+            margin-bottom: 20px;
+        }
+        
+        /* Cards */
+        .card {
+            background: white;
+            border-radius: 12px;
+            padding: 30px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.08);
+            margin-bottom: 30px;
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+        
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.15);
+        }
+        
+        .highlight-box {
+            background: linear-gradient(135deg, #667eea15 0%, #764ba215 100%);
+            border-left: 4px solid #667eea;
+            padding: 25px;
+            border-radius: 8px;
+            margin: 30px 0;
+        }
+        
+        /* Metrics Grid */
+        .metrics-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 25px;
+            margin: 40px 0;
+        }
+        
+        .metric-card {
+            background: white;
+            border: 2px solid transparent;
+            border-radius: 15px;
+            padding: 30px;
+            text-align: center;
+            transition: all 0.3s;
+            background: linear-gradient(white, white) padding-box,
+                        linear-gradient(135deg, #667eea, #764ba2) border-box;
+        }
+        
+        .metric-card:hover {
+            transform: scale(1.05);
+            box-shadow: 0 10px 30px rgba(102, 126, 234, 0.2);
+        }
+        
+        .metric-value {
+            font-size: 48px;
+            font-weight: bold;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 10px;
+        }
+        
+        .metric-label {
+            color: #636e72;
+            font-size: 14px;
+            line-height: 1.5;
+        }
+        
+        /* Tables */
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 30px 0;
+            background: white;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.08);
+        }
+        
+        th {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            padding: 20px;
+            text-align: left;
+            font-weight: 500;
+        }
+        
+        td {
+            padding: 20px;
+            border-bottom: 1px solid #e9ecef;
+        }
+        
+        tr:last-child td {
+            border-bottom: none;
+        }
+        
+        tr:hover {
+            background: #f8f9fa;
+        }
+        
+        /* Timeline */
+        .timeline {
+            position: relative;
+            padding: 20px 0;
+        }
+        
+        .timeline::before {
+            content: '';
+            position: absolute;
+            left: 50px;
+            top: 0;
+            bottom: 0;
+            width: 2px;
+            background: linear-gradient(180deg, #667eea, #764ba2);
+        }
+        
+        .timeline-item {
+            display: flex;
+            margin: 40px 0;
+            position: relative;
+        }
+        
+        .timeline-marker {
+            width: 40px;
+            height: 40px;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+            flex-shrink: 0;
+            position: relative;
+            z-index: 1;
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.3);
+        }
+        
+        .timeline-content {
+            margin-left: 30px;
+            flex-grow: 1;
+            background: white;
+            padding: 25px;
+            border-radius: 12px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.08);
+            transition: transform 0.3s;
+        }
+        
+        .timeline-content:hover {
+            transform: translateX(10px);
+        }
+        
+        .timeline-duration {
+            color: #667eea;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+        
+        /* Charts Container */
+        .chart-container {
+            background: white;
+            border-radius: 12px;
+            padding: 25px;
+            margin: 30px 0;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.08);
+        }
+        
+        .chart-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+            gap: 30px;
+            margin: 30px 0;
+        }
+        
+        /* Features List */
+        .feature-list {
+            list-style: none;
+            margin: 20px 0;
+        }
+        
+        .feature-list li {
+            padding: 15px;
+            margin: 10px 0;
+            background: linear-gradient(to right, #f8f9fa, transparent);
+            border-left: 3px solid #667eea;
+            border-radius: 5px;
+            transition: all 0.3s;
+        }
+        
+        .feature-list li:hover {
+            transform: translateX(10px);
+            background: linear-gradient(to right, #667eea15, transparent);
+        }
+        
+        /* Badges */
+        .badge {
+            display: inline-block;
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 500;
+            margin: 0 5px;
+        }
+        
+        .badge-primary {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+        }
+        
+        .badge-success {
+            background: linear-gradient(135deg, #00b894, #00cec9);
+            color: white;
+        }
+        
+        /* Responsive */
+        @media (max-width: 768px) {
+            .header {
+                padding: 40px 30px;
+            }
+            
+            h1 {
+                font-size: 32px;
+            }
+            
+            .tab-content {
+                padding: 30px 20px;
+            }
+            
+            .metrics-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .chart-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .timeline::before {
+                left: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <header class="header">
+            <div class="header-content">
+                <div class="company-badge">Thrive Digital Marketing</div>
+                <h1>Order Integration Platform</h1>
+                <div class="subtitle">Transforming LK Plastics' Distribution Network</div>
+                <div class="header-meta">
+                    <span>📅 Proposal Date: 9/19/25</span>
+                    <span>🎯 Prepared for: LK Plastics</span>
+                    <span>💼 Project Type: Enterprise Integration</span>
+                </div>
+            </div>
+        </header>
+        
+        <!-- Tab Navigation -->
+        <div class="tab-nav">
+            <button class="tab-button active" onclick="showTab('overview')">Executive Overview</button>
+            <button class="tab-button" onclick="showTab('technical')">Technical Architecture</button>
+            <button class="tab-button" onclick="showTab('features')">Platform Features</button>
+            <button class="tab-button" onclick="showTab('timeline')">Implementation</button>
+            <button class="tab-button" onclick="showTab('investment')">Investment & ROI</button>
+            <button class="tab-button" onclick="showTab('benefits')">Business Benefits</button>
+        </div>
+        
+        <!-- Tab Content -->
+        <div class="tab-content">
+            
+            <!-- Executive Overview Tab -->
+            <div id="overview" class="tab-pane active">
+                <h2>Executive Summary</h2>
+                
+                <div class="highlight-box">
+                    <p><strong>Thrive Digital Marketing</strong> presents this proposal to develop a custom order integration platform for LK Plastics, designed to revolutionize how your distributor network processes and manages customer orders. This innovative solution will provide each distributor with a grey-labeled platform connected to LK Plastics' current ERP and existing databases.</p>
+                </div>
+                
+                <h3>Project Scope</h3>
+                <div class="card">
+                    <ol style="line-height: 2;">
+                        <li><strong>API Development</strong> – Creation of custom API documentation and functionality</li>
+                        <li><strong>Web workflow development</strong> – Creation of master back end site for reps</li>
+                        <li><strong>Distributor Network Website Buildout</strong> – Customized sites for each distributor</li>
+                    </ol>
+                </div>
+                
+                <h3>Success Metrics</h3>
+                <div class="metrics-grid">
+                    <div class="metric-card">
+                        <div class="metric-value">50%</div>
+                        <div class="metric-label">Reduction in order processing time</div>
+                    </div>
+                    <div class="metric-card">
+                        <div class="metric-value">95%</div>
+                        <div class="metric-label">Inventory accuracy across all platforms</div>
+                    </div>
+                    <div class="metric-card">
+                        <div class="metric-value">30%</div>
+                        <div class="metric-label">Increase in distributor order volume</div>
+                    </div>
+                    <div class="metric-card">
+                        <div class="metric-value">99.9%</div>
+                        <div class="metric-label">System uptime and reliability</div>
+                    </div>
+                </div>
+                
+                <h3>Strategic Value Proposition</h3>
+                <p>This investment will position LK Plastics as a technology leader in the plastics industry while providing measurable ROI through operational efficiencies, increased order volume, and enhanced distributor satisfaction.</p>
+                
+                <div class="chart-container" style="max-width: 500px; margin: 30px auto;">
+                    <h4 style="margin-bottom: 20px;">Projected Performance Improvements</h4>
+                    <canvas id="performanceChart"></canvas>
+                </div>
+            </div>
+            
+            <!-- Technical Architecture Tab -->
+            <div id="technical" class="tab-pane">
+                <h2>Technical Solution Architecture</h2>
+                
+                <div class="card">
+                    <h3>System Architecture Overview</h3>
+                    <p>The proposed solution utilizes enterprise-grade cloud infrastructure built on Thrive's robust ecosystem, ensuring scalability, security, and reliability. The architecture follows modern microservices principles, enabling modular development and future enhancements.</p>
+                </div>
+                
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Component</th>
+                            <th>Technology</th>
+                            <th>Purpose</th>
+                            <th>Benefits</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><strong>API Gateway</strong></td>
+                            <td>Salesforce Platform APIs</td>
+                            <td>Centralized API management</td>
+                            <td>Security, throttling, monitoring</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Order Management</strong></td>
+                            <td>Salesforce Order Management</td>
+                            <td>Order lifecycle management</td>
+                            <td>Real-time tracking, automated workflows</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Commerce Engine</strong></td>
+                            <td>Salesforce Commerce Cloud</td>
+                            <td>E-commerce functionality</td>
+                            <td>Proven scalability, feature-rich</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Integration Layer</strong></td>
+                            <td>Custom REST APIs</td>
+                            <td>System connectivity</td>
+                            <td>Seamless data flow, real-time sync</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Database</strong></td>
+                            <td>Salesforce Database</td>
+                            <td>Data storage and management</td>
+                            <td>Enterprise security, backup, scaling</td>
+                        </tr>
+                    </tbody>
+                </table>
+                
+                <h3>System Integration Flow</h3>
+                <div style="margin: 30px 0; padding: 20px; background: white; border: 1px solid #e0e0e0; border-radius: 12px;">
+                    <!-- Embedded Workflow Diagram - EXACT VERSION -->
+                    <svg viewBox="0 0 1200 1400" xmlns="http://www.w3.org/2000/svg" style="width: 100%; height: auto; max-width: 1000px; margin: 0 auto; display: block;">
+                        <!-- Define markers for arrows -->
+                        <defs>
+                            <marker id="arrowhead2" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto">
+                                <polygon points="0 0, 10 3, 0 6" fill="#333" />
+                            </marker>
+                            <marker id="arrowhead2-dotted" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto">
+                                <polygon points="0 0, 10 3, 0 6" fill="#666" />
+                            </marker>
+                        </defs>
+                        
+                        <!-- Customer Layer Box -->
+                        <rect x="20" y="20" width="500" height="120" fill="none" stroke="black" stroke-width="2"/>
+                        <text x="30" y="40" font-size="14" font-weight="bold">Customer Layer</text>
+                        
+                        <!-- Customer Boxes -->
+                        <rect x="60" y="60" width="100" height="50" fill="#87CEEB" stroke="black" stroke-width="1"/>
+                        <text x="110" y="90" text-anchor="middle" font-size="12">Customer A</text>
+                        
+                        <rect x="210" y="60" width="100" height="50" fill="#87CEEB" stroke="black" stroke-width="1"/>
+                        <text x="260" y="90" text-anchor="middle" font-size="12">Customer B</text>
+                        
+                        <rect x="360" y="60" width="100" height="50" fill="#87CEEB" stroke="black" stroke-width="1"/>
+                        <text x="410" y="90" text-anchor="middle" font-size="12">Customer C</text>
+                        
+                        <!-- Backend Admin Box -->
+                        <rect x="580" y="20" width="600" height="120" fill="none" stroke="black" stroke-width="2"/>
+                        <text x="590" y="40" font-size="14" font-weight="bold">Backend Admin</text>
+                        
+                        <!-- Admin Boxes -->
+                        <rect x="600" y="50" width="180" height="80" fill="#FFB6C1" stroke="black" stroke-width="1"/>
+                        <text x="690" y="70" text-anchor="middle" font-size="11" font-weight="bold">Distributor Admin Panel</text>
+                        <text x="690" y="85" text-anchor="middle" font-size="10">- Set Profit Margins</text>
+                        <text x="690" y="98" text-anchor="middle" font-size="10">- View Orders</text>
+                        <text x="690" y="111" text-anchor="middle" font-size="10">- Customer Management</text>
+                        <text x="690" y="124" text-anchor="middle" font-size="10">- Sales Reports</text>
+                        
+                        <rect x="900" y="50" width="180" height="80" fill="#FFB6C1" stroke="black" stroke-width="1"/>
+                        <text x="990" y="70" text-anchor="middle" font-size="11" font-weight="bold">Master Admin Dashboard</text>
+                        <text x="990" y="85" text-anchor="middle" font-size="10">- Monitor All Distributors</text>
+                        <text x="990" y="98" text-anchor="middle" font-size="10">- Manage Products</text>
+                        <text x="990" y="111" text-anchor="middle" font-size="10">- Set Base Prices</text>
+                        <text x="990" y="124" text-anchor="middle" font-size="10">- Analytics &amp; Reports</text>
+                        
+                        <!-- Distributor Websites Layer -->
+                        <rect x="150" y="200" width="750" height="100" fill="none" stroke="black" stroke-width="2"/>
+                        <text x="160" y="195" font-size="12">Distributor Websites</text>
+                        <text x="160" y="210" font-size="10">(White-Label)</text>
+                        
+                        <!-- Distributor Website Boxes -->
+                        <rect x="180" y="220" width="160" height="60" fill="#DDA0DD" stroke="black" stroke-width="1"/>
+                        <text x="260" y="240" text-anchor="middle" font-size="11" font-weight="bold">Distributor 1 Website</text>
+                        <text x="260" y="255" text-anchor="middle" font-size="10">Custom Branding</text>
+                        <text x="260" y="268" text-anchor="middle" font-size="10">Custom Pricing</text>
+                        
+                        <rect x="380" y="220" width="160" height="60" fill="#DDA0DD" stroke="black" stroke-width="1"/>
+                        <text x="460" y="240" text-anchor="middle" font-size="11" font-weight="bold">Distributor 2 Website</text>
+                        <text x="460" y="255" text-anchor="middle" font-size="10">Custom Branding</text>
+                        <text x="460" y="268" text-anchor="middle" font-size="10">Custom Pricing</text>
+                        
+                        <rect x="580" y="220" width="160" height="60" fill="#DDA0DD" stroke="black" stroke-width="1"/>
+                        <text x="660" y="240" text-anchor="middle" font-size="11" font-weight="bold">Distributor 3 Website</text>
+                        <text x="660" y="255" text-anchor="middle" font-size="10">Custom Branding</text>
+                        <text x="660" y="268" text-anchor="middle" font-size="10">Custom Pricing</text>
+                        
+                        <!-- API Gateway Layer -->
+                        <rect x="450" y="350" width="500" height="100" fill="none" stroke="black" stroke-width="2"/>
+                        <text x="460" y="370" font-size="14" font-weight="bold">API Gateway Layer</text>
+                        
+                        <rect x="550" y="380" width="180" height="50" fill="#FFDAB9" stroke="black" stroke-width="1"/>
+                        <text x="640" y="395" text-anchor="middle" font-size="11" font-weight="bold">API Gateway</text>
+                        <text x="640" y="408" text-anchor="middle" font-size="10">OAuth 2.0 Authentication</text>
+                        <text x="640" y="421" text-anchor="middle" font-size="10">Rate Limiting</text>
+                        <text x="640" y="434" text-anchor="middle" font-size="10">Request Routing</text>
+                        
+                        <!-- Customer API Layer -->
+                        <rect x="50" y="500" width="1050" height="120" fill="none" stroke="black" stroke-width="2"/>
+                        <text x="60" y="520" font-size="14" font-weight="bold">Customer API Layer</text>
+                        
+                        <!-- API Boxes -->
+                        <rect x="100" y="530" width="180" height="70" fill="#FFDAB9" stroke="black" stroke-width="1"/>
+                        <text x="190" y="545" text-anchor="middle" font-size="10" font-weight="bold">Customer Management APIs</text>
+                        <text x="190" y="558" text-anchor="middle" font-size="9">- Authentication</text>
+                        <text x="190" y="570" text-anchor="middle" font-size="9">- Profile Management</text>
+                        <text x="190" y="582" text-anchor="middle" font-size="9">- Order History</text>
+                        <text x="190" y="594" text-anchor="middle" font-size="9">- Pricing Rules</text>
+                        
+                        <rect x="350" y="530" width="180" height="70" fill="#FFDAB9" stroke="black" stroke-width="1"/>
+                        <text x="440" y="545" text-anchor="middle" font-size="10" font-weight="bold">Order Management APIs</text>
+                        <text x="440" y="558" text-anchor="middle" font-size="9">- Create Order</text>
+                        <text x="440" y="570" text-anchor="middle" font-size="9">- Track Status</text>
+                        <text x="440" y="582" text-anchor="middle" font-size="9">- Modify/Cancel</text>
+                        <text x="440" y="594" text-anchor="middle" font-size="9">- Bulk Processing</text>
+                        
+                        <rect x="600" y="530" width="180" height="70" fill="#FFDAB9" stroke="black" stroke-width="1"/>
+                        <text x="690" y="545" text-anchor="middle" font-size="10" font-weight="bold">Inventory Management APIs</text>
+                        <text x="690" y="558" text-anchor="middle" font-size="9">- Real-time Sync</text>
+                        <text x="690" y="570" text-anchor="middle" font-size="9">- Allocation</text>
+                        <text x="690" y="582" text-anchor="middle" font-size="9">- Low Stock Alerts</text>
+                        <text x="690" y="594" text-anchor="middle" font-size="9">- Multi-location Tracking</text>
+                        
+                        <!-- External Systems (Left side) -->
+                        <rect x="50" y="470" width="150" height="50" fill="#90EE90" stroke="black" stroke-width="1"/>
+                        <text x="125" y="490" text-anchor="middle" font-size="11" font-weight="bold">Payment Gateway</text>
+                        <text x="125" y="505" text-anchor="middle" font-size="10">Transaction Processing</text>
+                        
+                        <!-- Salesforce Platform Layer -->
+                        <rect x="520" y="660" width="550" height="250" fill="none" stroke="black" stroke-width="2"/>
+                        <text x="530" y="680" font-size="14" font-weight="bold">Salesforce Platform</text>
+                        
+                        <rect x="550" y="700" width="180" height="50" fill="#98FB98" stroke="black" stroke-width="1"/>
+                        <text x="640" y="715" text-anchor="middle" font-size="11" font-weight="bold">Salesforce Order</text>
+                        <text x="640" y="728" text-anchor="middle" font-size="11" font-weight="bold">Management</text>
+                        <text x="640" y="741" text-anchor="middle" font-size="10">Order Processing</text>
+                        <text x="640" y="754" text-anchor="middle" font-size="10">Fulfillment</text>
+                        
+                        <rect x="800" y="700" width="180" height="50" fill="#98FB98" stroke="black" stroke-width="1"/>
+                        <text x="890" y="715" text-anchor="middle" font-size="11" font-weight="bold">Salesforce Commerce Cloud</text>
+                        <text x="890" y="730" text-anchor="middle" font-size="10">Product Catalog</text>
+                        <text x="890" y="743" text-anchor="middle" font-size="10">Pricing Engine</text>
+                        
+                        <!-- Salesforce Database (Cylinder) -->
+                        <ellipse cx="750" cy="820" rx="80" ry="30" fill="#98FB98" stroke="black" stroke-width="1"/>
+                        <rect x="670" y="820" width="160" height="60" fill="#98FB98" stroke="none"/>
+                        <ellipse cx="750" cy="880" rx="80" ry="30" fill="#98FB98" stroke="black" stroke-width="1"/>
+                        <line x1="670" y1="820" x2="670" y2="880" stroke="black" stroke-width="1"/>
+                        <line x1="830" y1="820" x2="830" y2="880" stroke="black" stroke-width="1"/>
+                        <text x="750" y="835" text-anchor="middle" font-size="11" font-weight="bold">Salesforce Database</text>
+                        <text x="750" y="850" text-anchor="middle" font-size="10">Products</text>
+                        <text x="750" y="863" text-anchor="middle" font-size="10">Customers</text>
+                        <text x="750" y="876" text-anchor="middle" font-size="10">Orders</text>
+                        <text x="750" y="889" text-anchor="middle" font-size="10">Inventory</text>
+                        
+                        <!-- Integration Layer -->
+                        <rect x="600" y="960" width="400" height="100" fill="none" stroke="black" stroke-width="2"/>
+                        <text x="610" y="980" font-size="14" font-weight="bold">Integration Layer</text>
+                        
+                        <rect x="620" y="990" width="150" height="50" fill="#E6E6FA" stroke="black" stroke-width="1"/>
+                        <text x="695" y="1005" text-anchor="middle" font-size="10" font-weight="bold">Data Synchronization</text>
+                        <text x="695" y="1018" text-anchor="middle" font-size="9">Inventory Updates</text>
+                        <text x="695" y="1031" text-anchor="middle" font-size="9">Price Changes</text>
+                        
+                        <rect x="820" y="990" width="150" height="50" fill="#90EE90" stroke="black" stroke-width="1"/>
+                        <text x="895" y="1005" text-anchor="middle" font-size="10" font-weight="bold">Webhooks</text>
+                        <text x="895" y="1018" text-anchor="middle" font-size="9">Real-time Updates</text>
+                        
+                        <!-- Bottom External Systems -->
+                        <rect x="200" y="1100" width="150" height="60" fill="#E6E6FA" stroke="black" stroke-width="1"/>
+                        <text x="275" y="1120" text-anchor="middle" font-size="11" font-weight="bold">LK Plastics ERP System</text>
+                        <text x="275" y="1135" text-anchor="middle" font-size="10">Legacy Database</text>
+                        
+                        <rect x="400" y="1100" width="150" height="60" fill="#E6E6FA" stroke="black" stroke-width="1"/>
+                        <text x="475" y="1120" text-anchor="middle" font-size="11" font-weight="bold">Email Service</text>
+                        <text x="475" y="1135" text-anchor="middle" font-size="10">Order Notifications</text>
+                        <text x="475" y="1148" text-anchor="middle" font-size="10">Alerts</text>
+                        
+                        <!-- Connection Lines - Solid arrows -->
+                        <!-- Customers to Distributors -->
+                        <line x1="110" y1="110" x2="260" y2="220" stroke="black" stroke-width="1" marker-end="url(#arrowhead2)"/>
+                        <line x1="260" y1="110" x2="460" y2="220" stroke="black" stroke-width="1" marker-end="url(#arrowhead2)"/>
+                        <line x1="410" y1="110" x2="660" y2="220" stroke="black" stroke-width="1" marker-end="url(#arrowhead2)"/>
+                        
+                        <!-- Distributors to API Gateway -->
+                        <line x1="260" y1="280" x2="550" y2="380" stroke="black" stroke-width="1" marker-end="url(#arrowhead2)"/>
+                        <line x1="460" y1="280" x2="640" y2="380" stroke="black" stroke-width="1" marker-end="url(#arrowhead2)"/>
+                        <line x1="660" y1="280" x2="730" y2="380" stroke="black" stroke-width="1" marker-end="url(#arrowhead2)"/>
+                        
+                        <!-- API Gateway to APIs -->
+                        <line x1="640" y1="430" x2="190" y2="530" stroke="black" stroke-width="1" marker-end="url(#arrowhead2)"/>
+                        <line x1="640" y1="430" x2="440" y2="530" stroke="black" stroke-width="1" marker-end="url(#arrowhead2)"/>
+                        <line x1="640" y1="430" x2="690" y2="530" stroke="black" stroke-width="1" marker-end="url(#arrowhead2)"/>
+                        
+                        <!-- APIs to Salesforce -->
+                        <line x1="440" y1="600" x2="640" y2="700" stroke="black" stroke-width="1" marker-end="url(#arrowhead2)"/>
+                        <line x1="690" y1="600" x2="890" y2="700" stroke="black" stroke-width="1" marker-end="url(#arrowhead2)"/>
+                        
+                        <!-- Salesforce to Database -->
+                        <line x1="640" y1="750" x2="750" y2="820" stroke="black" stroke-width="1" marker-end="url(#arrowhead2)"/>
+                        <line x1="890" y1="750" x2="750" y2="820" stroke="black" stroke-width="1" marker-end="url(#arrowhead2)"/>
+                        
+                        <!-- Database to Integration -->
+                        <line x1="750" y1="910" x2="695" y2="990" stroke="black" stroke-width="1" marker-end="url(#arrowhead2)"/>
+                        <line x1="750" y1="910" x2="895" y2="990" stroke="black" stroke-width="1" marker-end="url(#arrowhead2)"/>
+                        
+                        <!-- Integration to External Systems -->
+                        <line x1="695" y1="1040" x2="275" y2="1100" stroke="black" stroke-width="1" marker-end="url(#arrowhead2)"/>
+                        <line x1="895" y1="1040" x2="475" y2="1100" stroke="black" stroke-width="1" marker-end="url(#arrowhead2)"/>
+                        
+                        <!-- Dotted lines for settings/management -->
+                        <!-- Admin to Distributors -->
+                        <line x1="690" y1="130" x2="260" y2="220" stroke="gray" stroke-width="1" stroke-dasharray="5,5" marker-end="url(#arrowhead2-dotted)"/>
+                        <line x1="690" y1="130" x2="460" y2="220" stroke="gray" stroke-width="1" stroke-dasharray="5,5" marker-end="url(#arrowhead2-dotted)"/>
+                        <line x1="690" y1="130" x2="660" y2="220" stroke="gray" stroke-width="1" stroke-dasharray="5,5" marker-end="url(#arrowhead2-dotted)"/>
+                        
+                        <!-- Master Admin monitoring -->
+                        <line x1="990" y1="130" x2="900" y2="250" stroke="gray" stroke-width="1" stroke-dasharray="5,5" marker-end="url(#arrowhead2-dotted)"/>
+                        
+                        <!-- Payment Gateway connection -->
+                        <line x1="125" y1="470" x2="260" y2="280" stroke="black" stroke-width="1" marker-end="url(#arrowhead2)"/>
+                        
+                        <!-- Labels for dotted lines -->
+                        <text x="400" y="175" font-size="9" fill="gray">Manage Settings</text>
+                        <text x="950" y="200" font-size="9" fill="gray">Monitor &amp; Control</text>
+                    </svg>
+                </div>
+                
+                <div class="chart-grid">
+                    <div class="chart-container">
+                        <h4>API Response Time Targets</h4>
+                        <canvas id="apiChart"></canvas>
+                    </div>
+                    <div class="chart-container">
+                        <h4>System Load Distribution</h4>
+                        <canvas id="loadChart"></canvas>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Platform Features Tab -->
+            <div id="features" class="tab-pane">
+                <h2>Platform Features</h2>
+                
+                <div class="card">
+                    <h3>🚀 API Development Features</h3>
+                    <ul class="feature-list">
+                        <li><strong>Order Management APIs:</strong> Real-time order creation, tracking, modification, and bulk processing</li>
+                        <li><strong>Inventory Management APIs:</strong> Live synchronization, allocation, alerts, and multi-location tracking</li>
+                        <li><strong>Customer Management APIs:</strong> Authentication, profiles, order history, and pricing rules</li>
+                        <li><strong>RESTful Architecture:</strong> Standard HTTP methods with JSON responses for easy integration</li>
+                        <li><strong>Security:</strong> OAuth 2.0 authentication, JWT tokens, and API key management</li>
+                    </ul>
+                </div>
+                
+                <div class="card">
+                    <h3>🎨 Distributor Platform Features</h3>
+                    <ul class="feature-list">
+                        <li><strong>White-Label Customization:</strong> Complete brand control with custom domains</li>
+                        <li><strong>Dynamic Pricing Engine:</strong> Individual product markups with real-time updates</li>
+                        <li><strong>Product Management:</strong> Catalog sync, bundling, and promotional offerings</li>
+                        <li><strong>Dashboard Analytics:</strong> Sales metrics, inventory alerts, and profit analysis</li>
+                        <li><strong>Customer Portal:</strong> Self-service with order history and tracking</li>
+                    </ul>
+                </div>
+                
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Markup Feature</th>
+                            <th>Functionality</th>
+                            <th>Business Benefit</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><span class="badge badge-primary">NEW</span> Individual Product Markup</td>
+                            <td>Set unique margins per SKU</td>
+                            <td>Optimized profitability per product</td>
+                        </tr>
+                        <tr>
+                            <td>Category-Based Pricing</td>
+                            <td>Apply markups by product category</td>
+                            <td>Simplified bulk pricing management</td>
+                        </tr>
+                        <tr>
+                            <td>Volume Discounting</td>
+                            <td>Automatic quantity-based pricing</td>
+                            <td>Encourage larger orders</td>
+                        </tr>
+                        <tr>
+                            <td><span class="badge badge-success">PREMIUM</span> Customer-Specific Pricing</td>
+                            <td>Individual customer rate management</td>
+                            <td>Enhanced customer relationships</td>
+                        </tr>
+                        <tr>
+                            <td>Competitive Analysis</td>
+                            <td>Market price comparison tools</td>
+                            <td>Strategic pricing decisions</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            
+            <!-- Timeline Tab -->
+            <div id="timeline" class="tab-pane">
+                <h2>Implementation Timeline</h2>
+                
+                <div class="timeline">
+                    <div class="timeline-item">
+                        <div class="timeline-marker">1</div>
+                        <div class="timeline-content">
+                            <div class="timeline-duration">Phase 1: Discovery & Planning (4 weeks)</div>
+                            <h4>Requirements Analysis & Architecture Design</h4>
+                            <p>Detailed requirements gathering, technical architecture planning, and project roadmap development.</p>
+                            <p><strong>Success Criteria:</strong> Approved specifications and signed development agreement</p>
+                        </div>
+                    </div>
+                    
+                    <div class="timeline-item">
+                        <div class="timeline-marker">2</div>
+                        <div class="timeline-content">
+                            <div class="timeline-duration">Phase 2: Core API Development (8 weeks)</div>
+                            <h4>API Infrastructure Build</h4>
+                            <p>Development of order management APIs, inventory APIs, and security implementation.</p>
+                            <p><strong>Success Criteria:</strong> Functional APIs with complete documentation</p>
+                        </div>
+                    </div>
+                    
+                    <div class="timeline-item">
+                        <div class="timeline-marker">3</div>
+                        <div class="timeline-content">
+                            <div class="timeline-duration">Phase 3: Platform Development (10 weeks)</div>
+                            <h4>White-Label Platform Creation</h4>
+                            <p>Build distributor platforms with markup system and admin dashboard.</p>
+                            <p><strong>Success Criteria:</strong> Working platform with feature validation</p>
+                        </div>
+                    </div>
+                    
+                    <div class="timeline-item">
+                        <div class="timeline-marker">4</div>
+                        <div class="timeline-content">
+                            <div class="timeline-duration">Phase 4: Integration & Testing (6 weeks)</div>
+                            <h4>System Integration</h4>
+                            <p>Salesforce integration, comprehensive testing, and performance optimization.</p>
+                            <p><strong>Success Criteria:</strong> Performance benchmarks met</p>
+                        </div>
+                    </div>
+                    
+                    <div class="timeline-item">
+                        <div class="timeline-marker">5</div>
+                        <div class="timeline-content">
+                            <div class="timeline-duration">Phase 5: Pilot Deployment (4 weeks)</div>
+                            <h4>Limited Rollout</h4>
+                            <p>Select distributor deployment with training and feedback collection.</p>
+                            <p><strong>Success Criteria:</strong> User acceptance achieved</p>
+                        </div>
+                    </div>
+                    
+                    <div class="timeline-item">
+                        <div class="timeline-marker">6</div>
+                        <div class="timeline-content">
+                            <div class="timeline-duration">Phase 6: Full Deployment (6 weeks)</div>
+                            <h4>Network-Wide Launch</h4>
+                            <p>Complete distributor rollout with support documentation.</p>
+                            <p><strong>Success Criteria:</strong> Full platform adoption</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="chart-container">
+                    <h4>Project Timeline Gantt Chart</h4>
+                    <canvas id="timelineChart"></canvas>
+                </div>
+            </div>
+            
+            <!-- Investment Tab -->
+            <div id="investment" class="tab-pane">
+                <h2>Investment & ROI Analysis</h2>
+                
+                <div class="card">
+                    <h3>Investment Breakdown</h3>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Investment Category</th>
+                                <th>Cost Range</th>
+                                <th>Deliverables</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><strong>API Development</strong></td>
+                                <td>$25,000 - $95,000</td>
+                                <td>Complete API ecosystem, Salesforce integration, documentation</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Web Development</strong></td>
+                                <td>$3,000 - $10,000</td>
+                                <td>Grey-label platforms, markup system, admin dashboards</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Distributor Site Integrations</strong></td>
+                                <td>$1,000 (paid by rep)</td>
+                                <td>Individual site development and customization</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                
+                <div class="chart-grid">
+                    <div class="chart-container">
+                        <h4>Investment Distribution</h4>
+                        <canvas id="investmentChart"></canvas>
+                    </div>
+                    <div class="chart-container">
+                        <h4>ROI Projection Timeline</h4>
+                        <canvas id="roiChart"></canvas>
+                    </div>
+                </div>
+                
+                <div class="highlight-box">
+                    <h3>Expected Return on Investment</h3>
+                    <p>Based on projected efficiency gains and revenue increases, the platform is expected to deliver positive ROI within 8-10 months of full deployment, with continuing returns through:</p>
+                    <ul style="margin-top: 15px;">
+                        <li>50% reduction in processing costs</li>
+                        <li>10-22% revenue increase</li>
+                        <li>30% increase in order volume</li>
+                        <li>Improved distributor satisfaction and retention</li>
+                    </ul>
+                </div>
+            </div>
+            
+            <!-- Benefits Tab -->
+            <div id="benefits" class="tab-pane">
+                <h2>Business Benefits & Strategic Value</h2>
+                
+                <div class="card">
+                    <h3>Operational Excellence</h3>
+                    <ul class="feature-list">
+                        <li>Elimination of manual order entry and associated errors</li>
+                        <li>Automated customer communications improve service quality</li>
+                        <li>Real-time reporting provides actionable business insights</li>
+                        <li>Streamlined inventory management across all channels</li>
+                        <li>50% reduction in operational processing costs</li>
+                    </ul>
+                </div>
+                
+                <div class="card">
+                    <h3>Competitive Advantages</h3>
+                    <ul class="feature-list">
+                        <li>First-to-market comprehensive distributor platform in plastics industry</li>
+                        <li>Superior customer experience through technology integration</li>
+                        <li>Enhanced distributor loyalty through value-added services</li>
+                        <li>Scalable infrastructure supporting rapid business growth</li>
+                        <li>Data-driven insights enabling strategic decision making</li>
+                    </ul>
+                </div>
+                
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Benefit Category</th>
+                            <th>Specific Advantages</th>
+                            <th>Measurable Impact</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><strong>Revenue Growth</strong></td>
+                            <td>Increased order frequency, larger order sizes</td>
+                            <td>10-22% revenue increase projected</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Customer Satisfaction</strong></td>
+                            <td>Faster ordering, real-time tracking</td>
+                            <td>95% customer satisfaction target</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Market Expansion</strong></td>
+                            <td>Professional e-commerce presence</td>
+                            <td>Access to new customer segments</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Operational Efficiency</strong></td>
+                            <td>Automated processes, reduced errors</td>
+                            <td>50% reduction in processing costs</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Competitive Position</strong></td>
+                            <td>Advanced technology, superior service</td>
+                            <td>Market leadership positioning</td>
+                        </tr>
+                    </tbody>
+                </table>
+                
+                <div class="chart-container">
+                    <h4>Business Impact Analysis</h4>
+                    <canvas id="impactChart"></canvas>
+                </div>
+            </div>
+            
+        </div>
+    </div>
+    
+    <script>
+        // Tab switching function
+        function showTab(tabName) {
+            // Hide all tabs
+            const tabs = document.querySelectorAll('.tab-pane');
+            tabs.forEach(tab => tab.classList.remove('active'));
+            
+            // Remove active class from all buttons
+            const buttons = document.querySelectorAll('.tab-button');
+            buttons.forEach(btn => btn.classList.remove('active'));
+            
+            // Show selected tab
+            document.getElementById(tabName).classList.add('active');
+            
+            // Add active class to clicked button
+            event.target.classList.add('active');
+        }
+        
+        // Initialize charts
+        window.addEventListener('load', function() {
+            // Performance Chart
+            const performanceCtx = document.getElementById('performanceChart');
+            if (performanceCtx) {
+                new Chart(performanceCtx, {
+                    type: 'radar',
+                    data: {
+                        labels: ['Processing Speed', 'Inventory Accuracy', 'Order Volume', 'Customer Satisfaction', 'Cost Reduction'],
+                        datasets: [{
+                            label: 'Current State',
+                            data: [45, 75, 70, 65, 40],
+                            borderColor: 'rgba(200, 200, 200, 0.8)',
+                            backgroundColor: 'rgba(200, 200, 200, 0.2)',
+                        }, {
+                            label: 'With Platform',
+                            data: [90, 95, 100, 95, 90],
+                            borderColor: 'rgba(102, 126, 234, 0.8)',
+                            backgroundColor: 'rgba(102, 126, 234, 0.2)',
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        scales: {
+                            r: {
+                                beginAtZero: true,
+                                max: 100
+                            }
+                        }
+                    }
+                });
+            }
+            
+            // API Response Time Chart
+            const apiCtx = document.getElementById('apiChart');
+            if (apiCtx) {
+                new Chart(apiCtx, {
+                    type: 'bar',
+                    data: {
+                        labels: ['GET Orders', 'POST Order', 'GET Inventory', 'UPDATE Product', 'AUTH Request'],
+                        datasets: [{
+                            label: 'Response Time (ms)',
+                            data: [120, 200, 80, 150, 50],
+                            backgroundColor: [
+                                'rgba(102, 126, 234, 0.8)',
+                                'rgba(118, 75, 162, 0.8)',
+                                'rgba(102, 126, 234, 0.8)',
+                                'rgba(118, 75, 162, 0.8)',
+                                'rgba(102, 126, 234, 0.8)'
+                            ]
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        scales: {
+                            y: {
+                                beginAtZero: true,
+                                title: {
+                                    display: true,
+                                    text: 'Milliseconds'
+                                }
+                            }
+                        }
+                    }
+                });
+            }
+            
+            // System Load Distribution
+            const loadCtx = document.getElementById('loadChart');
+            if (loadCtx) {
+                new Chart(loadCtx, {
+                    type: 'doughnut',
+                    data: {
+                        labels: ['Order Processing', 'Inventory Sync', 'User Auth', 'Reporting', 'Other'],
+                        datasets: [{
+                            data: [35, 25, 15, 15, 10],
+                            backgroundColor: [
+                                'rgba(102, 126, 234, 0.8)',
+                                'rgba(118, 75, 162, 0.8)',
+                                'rgba(255, 107, 107, 0.8)',
+                                'rgba(46, 213, 115, 0.8)',
+                                'rgba(255, 193, 7, 0.8)'
+                            ]
+                        }]
+                    },
+                    options: {
+                        responsive: true
+                    }
+                });
+            }
+            
+            // Timeline Chart
+            const timelineCtx = document.getElementById('timelineChart');
+            if (timelineCtx) {
+                new Chart(timelineCtx, {
+                    type: 'bar',
+                    data: {
+                        labels: ['Discovery', 'API Dev', 'Platform Dev', 'Integration', 'Pilot', 'Full Deploy'],
+                        datasets: [{
+                            label: 'Duration (weeks)',
+                            data: [4, 8, 10, 6, 4, 6],
+                            backgroundColor: 'rgba(102, 126, 234, 0.8)'
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        indexAxis: 'y',
+                        scales: {
+                            x: {
+                                beginAtZero: true,
+                                title: {
+                                    display: true,
+                                    text: 'Weeks'
+                                }
+                            }
+                        }
+                    }
+                });
+            }
+            
+            // Investment Distribution
+            const investmentCtx = document.getElementById('investmentChart');
+            if (investmentCtx) {
+                new Chart(investmentCtx, {
+                    type: 'pie',
+                    data: {
+                        labels: ['API Development', 'Web Development', 'Integration', 'Testing', 'Training'],
+                        datasets: [{
+                            data: [60000, 7500, 15000, 10000, 7500],
+                            backgroundColor: [
+                                'rgba(102, 126, 234, 0.8)',
+                                'rgba(118, 75, 162, 0.8)',
+                                'rgba(255, 107, 107, 0.8)',
+                                'rgba(46, 213, 115, 0.8)',
+                                'rgba(255, 193, 7, 0.8)'
+                            ]
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        plugins: {
+                            legend: {
+                                position: 'bottom'
+                            }
+                        }
+                    }
+                });
+            }
+            
+            // ROI Chart
+            const roiCtx = document.getElementById('roiChart');
+            if (roiCtx) {
+                new Chart(roiCtx, {
+                    type: 'line',
+                    data: {
+                        labels: ['Month 0', 'Month 3', 'Month 6', 'Month 9', 'Month 12', 'Month 15', 'Month 18'],
+                        datasets: [{
+                            label: 'ROI %',
+                            data: [-100, -70, -30, 10, 50, 100, 150],
+                            borderColor: 'rgba(46, 213, 115, 0.8)',
+                            backgroundColor: 'rgba(46, 213, 115, 0.2)',
+                            tension: 0.4
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        scales: {
+                            y: {
+                                beginAtZero: false,
+                                title: {
+                                    display: true,
+                                    text: 'Return on Investment (%)'
+                                }
+                            }
+                        }
+                    }
+                });
+            }
+            
+            // Business Impact Chart
+            const impactCtx = document.getElementById('impactChart');
+            if (impactCtx) {
+                new Chart(impactCtx, {
+                    type: 'bar',
+                    data: {
+                        labels: ['Q1', 'Q2', 'Q3', 'Q4'],
+                        datasets: [{
+                            label: 'Revenue Impact (%)',
+                            data: [5, 10, 15, 22],
+                            backgroundColor: 'rgba(102, 126, 234, 0.8)'
+                        }, {
+                            label: 'Cost Savings (%)',
+                            data: [10, 25, 40, 50],
+                            backgroundColor: 'rgba(46, 213, 115, 0.8)'
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        scales: {
+                            y: {
+                                beginAtZero: true,
+                                max: 60,
+                                title: {
+                                    display: true,
+                                    text: 'Percentage'
+                                }
+                            }
+                        }
+                    }
+                });
+            }
+        });
+    </script>
+</body>
+</html>
